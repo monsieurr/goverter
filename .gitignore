@@ -10,6 +10,30 @@ yarn-debug.log*
 yarn-error.log*
 
 # npm
+package.json
+package-lock.json
+
+# Tailwind CSS
+*.css.map
+
+# htmx
+*.htmx.js
+
+# Logs
+logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# Build files
+dist/
+build/
 npm-debug.log*
 
 # Tailwind CSS
