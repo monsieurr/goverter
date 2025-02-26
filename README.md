@@ -1,7 +1,8 @@
 ## Goal of this project
-Make a simpler easier to use converter.
+Make a simpler easier to use units converter.
 
 ## Project structure
+```
 .
 ├── README.md : the README file, you are here
 ├── main.go : GO Web server, backend stuff
@@ -16,6 +17,7 @@ Make a simpler easier to use converter.
 └── templates
     ├── index.html : main HTML frontend stuff
     └── result.html : deprecated / not used anymore
+```
 
 ## Stack
 - Go
