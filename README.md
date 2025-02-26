@@ -2,8 +2,9 @@
 Make a simpler easier to use converter.
 
 ## Project structure
+```
 .
-├── README.md : the README file, you are here
+ ├── README.md : the README file, you are here
 ├── main.go : GO Web server, backend stuff
 ├── package-lock.json : generate this with npm
 ├── package.json : generate this with npm
@@ -16,6 +17,7 @@ Make a simpler easier to use converter.
 └── templates
     ├── index.html : main HTML frontend stuff
     └── result.html : deprecated / not used anymore
+```
 
 ## Stack
 - Go
