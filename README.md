@@ -1,10 +1,10 @@
 ## Goal of this project
-Make a simpler easier to use converter.
+Make a simpler easier to use units converter.
 
 ## Project structure
 ```
 .
- ├── README.md : the README file, you are here
+├── README.md : the README file, you are here
 ├── main.go : GO Web server, backend stuff
 ├── package-lock.json : generate this with npm
 ├── package.json : generate this with npm
