@@ -1,0 +1,35 @@
+# Go
+*.exe
+*.test
+*.o
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# npm
+npm-debug.log*
+
+# Tailwind CSS
+*.css.map
+
+# htmx
+*.htmx.js
+
+# Logs
+logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# Build files
+dist/
+build/

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <title>Unit Converter</title>
+    <script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script> 
+    <link href="../static/output.css" rel="stylesheet">
+    <!-- Add this script to prevent flash of wrong theme -->
+    <script>
+        // Theme initialization
+        if (localStorage.getItem('color-theme') === 'dark' || 
+            (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="min-h-screen flex items-center justify-center transition-colors duration-300 bg-gray-100 dark:bg-gray-900">    
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md transition-colors duration-300">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Unit Converter</h1>
+            <button id="theme-toggle" class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg id="moon" class="w-6 h-6 text-gray-700 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+                <svg id="sun" class="w-6 h-6 text-yellow-300 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Dimension selector -->
+        <div class="mb-4">
+            <label for="dimension" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dimension:</label>
+            <select 
+                id="dimension" 
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                {{range .Dimensions}}
+                <option value="{{.}}">{{index $.DimensionNames .}}</option>
+                {{end}}
+            </select>
+        </div>
+        
+        <form 
+            hx-post="/convert" 
+            hx-target="#result" 
+            hx-swap="innerHTML"
+            class="space-y-4">
+            
+            <div>
+                <label for="value" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Value:</label>
+                <input 
+                    type="number" 
+                    id="value" 
+                    name="value" 
+                    step="any" 
+                    required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <div class="flex-1">
+                    <label for="from" class="block text-sm font-medium text-gray-700 dark:text-gray-300">From:</label>
+                    <select 
+                        id="from" 
+                        name="from"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                        <!-- Unit options will be populated by JavaScript -->
+                    </select>
+                </div>
+
+                <button 
+                    type="button" 
+                    id="switch"
+                    class="mt-6 p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition transform duration-300 ease-in-out">
+                    ⇄
+                </button>
+
+                <div class="flex-1">
+                    <label for="to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">To:</label>
+                    <select 
+                        id="to" 
+                        name="to"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                        <!-- Unit options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <button 
+                type="submit"
+                class="w-full py-2 px-4 bg-indigo-500 text-white font-semibold rounded-md shadow-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out">
+                Convert
+            </button>
+        </form>
+
+        <div class="mt-6 relative">
+            <div id="result" class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md shadow-inner text-center text-2xl font-bold text-indigo-600 dark:text-indigo-400 transition-colors duration-300">
+                <!-- Result will appear here -->
+            </div>
+            <button 
+                id="copy-button" 
+                class="absolute top-2 right-2 p-2 text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-white dark:bg-gray-800 rounded-md shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 opacity-70 hover:opacity-100 transition-all duration-200"
+                title="Copy to clipboard"
+                aria-label="Copy result to clipboard">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div id="copy-notification" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg transform translate-y-10 opacity-0 transition-all duration-300">
+            Copied to clipboard!
+        </div>
+        
+        <div class="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center transition-colors duration-300">
+            <p>&copy; {{.CurrentYear}} Unit Converter</p>
+        </div>
+    </div>
+
+   <script>
+    // Data structure to store units by dimension
+    const unitsByDimension = {
+        {{- range $dimension, $units := .Units}}
+        "{{$dimension}}": [
+            {{- range $symbol, $unit := $units}}
+            { symbol: "{{$symbol}}", name: "{{$unit.Name}}" },
+            {{- end}}
+        ],
+        {{- end}}
+    };
+    
+    // Function to populate unit selectors based on selected dimension
+    function populateUnitSelectors(dimension) {
+        const fromSelect = document.getElementById("from");
+        const toSelect = document.getElementById("to");
+        
+        // Clear existing options
+        fromSelect.innerHTML = "";
+        toSelect.innerHTML = "";
+        
+        // Add new options based on dimension
+        const units = unitsByDimension[dimension];
+        if (units) {
+            units.forEach(unit => {
+                const fromOption = document.createElement("option");
+                fromOption.value = unit.symbol;
+                fromOption.textContent = `${unit.name} (${unit.symbol})`;
+                fromSelect.appendChild(fromOption);
+                
+                const toOption = document.createElement("option");
+                toOption.value = unit.symbol;
+                toOption.textContent = `${unit.name} (${unit.symbol})`;
+                toSelect.appendChild(toOption);
+            });
+            
+            // Select different default units from and to if possible
+            if (units.length > 1) {
+                toSelect.selectedIndex = 1;
+            }
+        }
+    }
+    
+    // Initialize with the first dimension
+    const dimensionSelect = document.getElementById("dimension");
+    populateUnitSelectors(dimensionSelect.value);
+    
+    // Update units when dimension changes
+    dimensionSelect.addEventListener("change", function() {
+        populateUnitSelectors(this.value);
+    });
+    
+    // Unit switcher functionality
+    document.getElementById("switch").addEventListener("click", function() {
+        let from = document.getElementById("from");
+        let to = document.getElementById("to");
+        let temp = from.value;
+        from.value = to.value;
+        to.value = temp;
+    });
+
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    // Toggle theme when button is clicked
+    themeToggle.addEventListener('click', function() {
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', 'light');
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', 'dark');
+        }
+    });
+
+    
+    // Copy result functionality
+    const copyButton = document.getElementById('copy-button');
+    const copyNotification = document.getElementById('copy-notification');
+    
+    copyButton.addEventListener('click', function() {
+        const resultText = document.getElementById('result').textContent.trim();
+        
+        if (resultText) {
+            navigator.clipboard.writeText(resultText).then(() => {
+                // Show notification
+                copyNotification.classList.remove('translate-y-10', 'opacity-0');
+                copyNotification.classList.add('translate-y-0', 'opacity-100');
+                
+                // Hide notification after 2 seconds
+                setTimeout(() => {
+                    copyNotification.classList.remove('translate-y-0', 'opacity-100');
+                    copyNotification.classList.add('translate-y-10', 'opacity-0');
+                }, 2000);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    });
+</script>
